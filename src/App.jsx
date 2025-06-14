@@ -1,108 +1,69 @@
-import { CircularProgress, Select, Box, Container, FormControl, InputLabel, MenuItem, TextField, Typography, Button, Paper } from '@mui/material';
-import { useState } from 'react';
-import './App.css';
-import axios from 'axios';
+import {
+  AppBar,
+  Box,
+  Container,
+  Toolbar,
+  ToggleButton,
+  ToggleButtonGroup,
+  Typography,
+  Paper,
+} from "@mui/material";
+import { useState } from "react";
+import "./App.css";
+import ReplyGenerator from "./components/ReplyGenerator";
+import EmailGenerator from "./components/EmailGenerator";
 
 function App() {
-  const [emailContent, setEmailContent] = useState(' ');
-  const [tone, setTone] = useState(' ');
-  const [generateReply, setGeneratedReply] = useState(' ');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(' ');
+  const [mode, setMode] = useState("generate");
 
-  const handleSubmit = async () => {
-    setLoading(true);
-    setError('');
-    try {
-      const response = await axios.post(import.meta.env.VITE_API_URL, {
-        emailContent,
-        tone
-      })
-      setGeneratedReply(typeof response.data === 'string' ? response.data : JSON.stringify(response.data));
-    } catch (error) {
-      setError('Failed to generate email reply. Please try again.');
-      console.error(error);
-    } finally {
-      setLoading(false);
+  const handleChange = (event, newMode) => {
+    if (newMode !== null) {
+      setMode(newMode);
     }
   };
 
   return (
-    <Container maxWidth="md" sx={{ py: 6 }}>
-      <Paper elevation={6} sx={{ p: 4, borderRadius: 3, backgroundColor: 'rgba(255, 255, 255, 0.9)' }}>
-        <Typography variant='h4' gutterBottom align='center' sx={{ fontWeight: 'bold' }}>
-          Email Reply Generator
-        </Typography>
-
-        <Box>
-          <TextField
-            fullWidth
-            multiline
-            rows={6}
-            variant='outlined'
-            label='Original email content'
-            value={emailContent}
-            onChange={(e) => setEmailContent(e.target.value)}
-            sx={{ mb: 3 }}
-          />
-
-          <FormControl fullWidth sx={{ mb: 3 }}>
-            <InputLabel id="tone-label">Tone (optional)</InputLabel>
-            <Select
-              labelId="tone-label"
-              value={tone}
-              label="Tone (optional)"
-              onChange={(e) => setTone(e.target.value)}
-            >
-              <MenuItem value="">None</MenuItem>
-              <MenuItem value="professional">Professional</MenuItem>
-              <MenuItem value="casual">Casual</MenuItem>
-              <MenuItem value="friendly">Friendly</MenuItem>
-            </Select>
-          </FormControl>
-
-          <Button
-            variant="contained"
-            onClick={handleSubmit}
-            disabled={!emailContent || loading}
-            fullWidth
-            sx={{ fontWeight: 'bold', py: 1.5 }}
-          >
-            {loading ? <CircularProgress size={24} /> : "Generate Reply"}
-          </Button>
-        </Box>
-
-        {error && (
-          <Typography color='error' sx={{ mt: 2 }}>
-            {error}
-          </Typography>
-        )}
-
-        {generateReply && (
-          <Box sx={{ mt: 4 }}>
-            <Typography variant='h6' gutterBottom>
-              Generated Reply
+    <>
+      {/* Navbar */}
+      <AppBar position="static" color="default" elevation={1}>
+        <Toolbar sx={{ justifyContent: "space-between" }}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <img src="../public/robot.jpg" alt="Logo" height="32" />
+            <Typography variant="h6" fontWeight="bold">
+              EM
+              <Box
+                component="span"
+                sx={{
+                  background: "linear-gradient(to right, #00C9FF, #92FE9D)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  fontWeight: "bold",
+                }}
+              >
+                AI
+              </Box>
+              L.
             </Typography>
-            <TextField
-              fullWidth
-              multiline
-              rows={15}
-              variant="outlined"
-              value={generateReply}
-              inputProps={{ readOnly: true }}
-              sx={{ backgroundColor: '#f1f8e9' }}
-            />
-            <Button
-              variant="outlined"
-              sx={{ mt: 2 }}
-              onClick={() => navigator.clipboard.writeText(generateReply)}
-            >
-              Copy to Clipboard
-            </Button>
           </Box>
-        )}
-      </Paper>
-    </Container>
+
+          <ToggleButtonGroup
+            color="primary"
+            value={mode}
+            exclusive
+            onChange={handleChange}
+          >
+            <ToggleButton value="generate">Generate</ToggleButton>
+            <ToggleButton value="reply">Reply</ToggleButton>
+          </ToggleButtonGroup>
+        </Toolbar>
+      </AppBar>
+
+      {/* Page Content */}
+      <Container maxWidth="md">
+        {mode === "reply" && <ReplyGenerator />}
+        {mode === "generate" && <EmailGenerator />}
+      </Container>
+    </>
   );
 }
 
