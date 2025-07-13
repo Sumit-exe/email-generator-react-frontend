@@ -28,7 +28,6 @@ function App() {
       <AppBar position="static" color="default" elevation={1}>
         <Toolbar sx={{ justifyContent: "space-between" }}>
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-            <img src="../public/robot.jpg" alt="Logo" height="32" />
             <Typography variant="h6" fontWeight="bold">
               EM
               <Box
