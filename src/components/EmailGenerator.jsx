@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import axios from "axios";
+import GeneratedReply from "./GeneratedReply";
 
 function EmailGenerator() {
   const [subject, setSubject] = useState("");
